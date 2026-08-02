@@ -80,7 +80,7 @@ async function checkTarget(target) {
     } catch (err) {
         return 30 * msPerMin;
     }
-    return msPerMin; // 1 min cooldown default
+    return 3 * msPerMin; // 3 min cooldown default
 }
 
 async function safeParseJSON(response) {
@@ -108,7 +108,7 @@ function getMinDiff(json) {
     // console.log("Current time:", present);
     // console.log("Last battle time:", lastBattle);
     minuteDiff = (present - lastBattle) / 1000; // timeDiff in seconds
-    return minuteDiff / 60.0; // timeDiff in minutes
+    return Math.round((minuteDiff / 60.0) * 100) / 100;
 }
 
 async function getPlayerName(playerTag) {
@@ -170,7 +170,7 @@ client.on('messageCreate', async (msg) => {
         case 'list':
             targets = db.getTargets(msg.author.id);
             if (targets.length > 0) {
-                listEmbed.setAuthor({ name: `${msg.author.username}#${msg.author.discriminator}`, iconURL: msg.author.displayAvatarURL() })
+                listEmbed.setAuthor({ name: `${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
                 listEmbed.setDescription(targets.join(", ")).setTimestamp();
                 listEmbed.setFooter({ text: `User ID: ${msg.author.id}` });
                 msg.channel.send({ embeds: [listEmbed] });

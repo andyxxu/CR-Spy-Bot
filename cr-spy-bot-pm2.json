@@ -1,0 +1,8 @@
+{
+  "apps": [{
+    "name": "CR-Spy-Bot",
+    "cwd": "./",
+    "script": "index.js",
+    "log_date_format": "YYYY-MM-DD HH:mm"
+  }]
+}
