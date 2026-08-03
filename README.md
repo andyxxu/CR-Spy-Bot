@@ -8,8 +8,8 @@ Download the source code from the repository and compile all the source code, re
 
 * config.token: [Discord bot token](https://discord.com/developers/docs/getting-started)
 * config.cr_key: [Clash Royale API key](https://developer.clashroyale.com/#/getting-started)
-* Run: `node index.js`
-* Run in background on Linux (optional): `pm2 start index.js --name "CR Spy Bot"`
+* Run in background on Linux (recommended): `pm2 start cr-spy-bot-pm2.json`
+* Run (not recommended): `node index.js`
 
 
 ## Dependencies

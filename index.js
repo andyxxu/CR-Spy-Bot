@@ -37,9 +37,19 @@ const listEmbed = new MessageEmbed()
 const db = require('./db');
 const msPerMin = 60000;
 
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled promise rejection:', err);
+    process.exit(1); // let PM2 restart cleanly
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception:', err);
+    process.exit(1);
+});
+
 async function spy(player_tag) {
     const cooldown = await checkTarget(player_tag);
-    console.log(`Cooldown (ms) for ${player_tag}: ${cooldown}`);
+    console.log(`Cooldown (m) for ${player_tag}: ${cooldown/msPerMin}`);
     setTimeout(spy, cooldown, player_tag);
 }
 const player_tags = db.getPlayerTags();
@@ -112,13 +122,26 @@ function getMinDiff(json) {
 }
 
 async function getPlayerName(playerTag) {
-    const playerJson = await fetch("https://api.clashroyale.com/v1/players/%23" + playerTag, myInit).then(safeParseJSON);
-    return playerJson.name;
+    try {
+        const playerJson = await fetch("https://api.clashroyale.com/v1/players/%23" + playerTag, myInit).then(safeParseJSON);
+        return playerJson.name;
+    } catch (err) {
+        console.error('Error fetching player name:', err);
+        return null;
+    }
 }
 
 client.on('ready', () => {
     client.user.setActivity("Clash Royale players", { type: "WATCHING" });
     console.log(client.user.username, 'is online.');
+});
+
+client.on('error', (err) => {
+    console.error('Discord client error:', err);
+});
+
+client.on('shardDisconnect', () => {
+    console.warn('Bot disconnected from Discord — attempting to reconnect...');
 });
 
 client.on('messageCreate', async (msg) => {
